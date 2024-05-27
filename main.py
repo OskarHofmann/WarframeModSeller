@@ -1,5 +1,6 @@
 import requests
 import pandas as pd
+# from dotenv import load_dotenv
 # import unicodedata
 
 
@@ -28,4 +29,5 @@ def get_augment_mods(syndicate = None, replace_special_whitespaces = True):
 
 
 if __name__ == '__main__':
+    # load_dotenv()
     print(get_augment_mods('Red Veil'))
