@@ -4,7 +4,7 @@ import pandas as pd
 # import unicodedata
 
 
-def get_augment_mods(syndicate = None, replace_special_whitespaces = True):
+def get_augment_mods(syndicate = None, replace_special_whitespaces = True) -> list[str]:
     url= 'https://warframe.fandom.com/wiki/Warframe_Augment_Mods/PvE'
     html = requests.get(url).content
     df = pd.read_html(html)[0]
