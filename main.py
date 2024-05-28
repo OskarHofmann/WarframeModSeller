@@ -38,7 +38,6 @@ def get_mod_prices(mods: list[str]) -> dict[str, int]:
     mod_prices = {}
     mod_ids = mod_names_to_ids(mods)
     for mod in mod_ids:
-        #print(MARKET_URL + f'/items/{mod_url}')
         api_response = requests.get(MARKET_URL + f'/items/{mod}/orders')
         response_json = api_response.json()
         orders = response_json['payload']['orders']
