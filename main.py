@@ -3,11 +3,12 @@ import pandas as pd
 # from dotenv import load_dotenv
 # import unicodedata
 
+MARKET_URL = 'https://api.warframe.market/v1'
 
-def get_augment_mods(syndicate = None, replace_special_whitespaces = True) -> list[str]:
+
+def get_augment_mods(syndicate: str | None = None, replace_special_whitespaces: bool = True) -> list[str]:
     url= 'https://warframe.fandom.com/wiki/Warframe_Augment_Mods/PvE'
-    html = requests.get(url).content
-    df = pd.read_html(html)[0]
+    df = pd.read_html(url)[0]
 
     # the DataFrame contains all mods seperated by spaces (individual words of a mod are split via non-break space \xa0 ) 
     augment_mods = []
@@ -26,8 +27,36 @@ def get_augment_mods(syndicate = None, replace_special_whitespaces = True) -> li
     return augment_mods
 
 
+def mod_names_to_ids(mods: list[str]) -> list[str]:
+    return [mod.replace(' ', '_').lower() for mod in mods]
+
+def mod_ids_to_names(mods: list[str]) -> list[str]:
+    return [mod.replace('_', ' ').title() for mod in mods]
+
+
+def get_mod_prices(mods: list[str]) -> dict[str, int]:
+    mod_prices = {}
+    mod_ids = mod_names_to_ids(mods)
+    for mod in mod_ids:
+        #print(MARKET_URL + f'/items/{mod_url}')
+        api_response = requests.get(MARKET_URL + f'/items/{mod}/orders')
+        response_json = api_response.json()
+        orders = response_json['payload']['orders']
+        available_orders = [order for order in orders if \
+                            order['user']['status'] == 'ingame' and \
+                            order['order_type'] == 'sell']
+        lowest_price = min(available_orders, key= lambda x: x['platinum'])['platinum']
+        mod_prices[mod] = lowest_price
+        break
+
+    #TODO: use asyncio to make calls for all mods in list
+
+    return mod_prices
+
+
 
 
 if __name__ == '__main__':
     # load_dotenv()
-    print(get_augment_mods('Red Veil'))
+    mods = get_augment_mods('Red Veil')
+    print(get_mod_prices(mods))
