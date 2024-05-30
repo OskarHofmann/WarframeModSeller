@@ -1,5 +1,7 @@
+import aiohttp
 import requests
 import pandas as pd
+import asyncio, aiohttp
 # from dotenv import load_dotenv
 # import unicodedata
 
@@ -28,34 +30,43 @@ def get_augment_mods(syndicate: str | None = None, replace_special_whitespaces: 
 
 
 def mod_names_to_ids(mods: list[str]) -> list[str]:
-    return [mod.replace(' ', '_').lower() for mod in mods]
+    return [mod.replace(' ', '_').replace("'", "").lower() for mod in mods]
 
-def mod_ids_to_names(mods: list[str]) -> list[str]:
-    return [mod.replace('_', ' ').title() for mod in mods]
+# def mod_ids_to_names(mods: list[str]) -> list[str]:
+#     return [mod.replace('_', ' ').title() for mod in mods]
 
 
-def get_mod_prices(mods: list[str]) -> dict[str, int]:
-    mod_prices = {}
-    mod_ids = mod_names_to_ids(mods)
-    for mod in mod_ids:
-        api_response = requests.get(MARKET_URL + f'/items/{mod}/orders')
-        response_json = api_response.json()
-        orders = response_json['payload']['orders']
+async def get_order_prices(item_id: str, session: aiohttp.ClientSession) -> list[int] :
+    api_url = MARKET_URL + f'/items/{item_id}/orders'
+    async with session.get(api_url) as response:
+        if response.status != 200:
+            print(f'API call for {item_id} failed.')
+            return []
+        response_json = await response.json(content_type=None)
+        try:
+            orders = response_json['payload']['orders']
+        except KeyError:
+            print(response_json)
         available_orders = [order for order in orders if \
                             order['user']['status'] == 'ingame' and \
                             order['order_type'] == 'sell']
-        lowest_price = min(available_orders, key= lambda x: x['platinum'])['platinum']
-        mod_prices[mod] = lowest_price
-        break
-
-    #TODO: use asyncio to make calls for all mods in list
-
-    return mod_prices
+        prices = [order['platinum'] for order in available_orders]
+        prices.sort()
+        return prices
 
 
+async def get_mod_prices(mods: list[str]) -> dict[str, list[int]]:
+    mod_prices = {}
+    mod_ids = mod_names_to_ids(mods)
+    async with aiohttp.ClientSession() as session:
+        tasks = [get_order_prices(mod_id, session) for mod_id in mod_ids]
+        results = await asyncio.gather(*tasks)          
+
+    # gather returns in same order as in the task order (i.e. the same order as in mod_ids)  :
+    return dict(zip(mod_ids, results))
 
 
 if __name__ == '__main__':
     # load_dotenv()
     mods = get_augment_mods('Red Veil')
-    print(get_mod_prices(mods))
+    print(asyncio.run(get_mod_prices(mods)))
