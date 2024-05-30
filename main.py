@@ -34,7 +34,7 @@ def mod_names_to_ids(mods: list[str]) -> list[str]:
 #     return [mod.replace('_', ' ').title() for mod in mods]
 
 
-async def get_order_prices(item_id: str, session: aiohttp.ClientSession, n_tries: int = 10) -> list[int] :
+async def get_order_prices(item_id: str, session: aiohttp.ClientSession, n_tries: int = 20) -> list[int] :
     api_url = MARKET_URL + f'/items/{item_id}/orders'
     # try n_tries times, before giving up
     for _ in range(n_tries):
@@ -74,11 +74,13 @@ if __name__ == '__main__':
     mods = get_augment_mods('Red Veil')
     mod_prices = asyncio.run(get_mod_prices(mods))
 
-    cheapest_offers = {name: prices[0] for name, prices in mod_prices.items()}
+    cheapest_offers = {name: prices[0] for name, prices in mod_prices.items() if len(prices) > 0}
     optimal_sell_price = max(cheapest_offers.values())
     mods_to_sell = [k for k,v in cheapest_offers.items() if v == optimal_sell_price]
 
-    print(f'Sell {mods_to_sell} at {optimal_sell_price - 1} platinum!')
+    mods_to_sell_prettified = "\n".join(mods_to_sell)
+
+    print(f'\nSell \n{mods_to_sell_prettified}\nat {optimal_sell_price - 1} platinum!')
 
     # TODO: move above sales strategy to own class/function
     # TODO automate sale
