@@ -3,7 +3,9 @@ import asyncio, aiohttp
 # from dotenv import load_dotenv
 # import unicodedata
 
-MARKET_URL = 'https://api.warframe.market/v1'
+import parameters as params
+
+
 
 
 def get_augment_mods(syndicate: str | None = None, replace_special_whitespaces: bool = True) -> list[str]:
@@ -35,7 +37,7 @@ def mod_names_to_ids(mods: list[str]) -> list[str]:
 
 
 async def get_order_prices(item_id: str, session: aiohttp.ClientSession, n_tries: int = 20) -> list[int] :
-    api_url = MARKET_URL + f'/items/{item_id}/orders'
+    api_url = params.MARKET_URL + f'/items/{item_id}/orders'
     # try n_tries times, before giving up
     for _ in range(n_tries):
         async with session.get(api_url) as response:
