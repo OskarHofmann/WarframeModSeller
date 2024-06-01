@@ -9,8 +9,7 @@ import parameters as params
 
 
 def get_augment_mods(syndicate: str | None = None, replace_special_whitespaces: bool = True) -> list[str]:
-    url= 'https://warframe.fandom.com/wiki/Warframe_Augment_Mods/PvE'
-    df = pd.read_html(url)[0]
+    df = pd.read_html(params.AUGMENT_MODS_URL)[0]
 
     # the DataFrame contains all mods seperated by spaces (individual words of a mod are split via non-break space \xa0 ) 
     augment_mods = []
