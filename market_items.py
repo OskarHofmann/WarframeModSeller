@@ -10,18 +10,24 @@ class MarketItem:
     prices: list[int] = []
 
     def __post_init__(self) -> None:
-        if len(self.item_name) > 0 and self.url_name == "":
+        if self.item_name and not self.url_name:
             self._create_url_name()
 
     # create url name by replacing spaces with underscores and remove apostrophe
     def _create_url_name(self) -> None:
         self. url_name = self.item_name.replace(' ', '_').replace("'", "").lower()
 
-    async def get_order_prices(self, item_id: str, session: aiohttp.ClientSession, n_tries: int = 20) -> list[int] :
-        api_url = params.MARKET_URL + f'/items/{item_id}/orders'
+    async def get_order_prices(self, session: aiohttp.ClientSession, n_tries: int = 20) -> list[int] :
+        api_url = params.MARKET_URL + f'/items/{self.url_name}/orders'
+
+        # if item id is unknown ask API to also provide additional item information
+        api_params = {}
+        if not id:
+            api_params = {'include': 'item'}
+
         # try n_tries times, before giving up
         for _ in range(n_tries):
-            async with session.get(api_url) as response:
+            async with session.get(url=api_url, params=api_params) as response:
                 if response.status != 200:
                     await asyncio.sleep(1)
                     continue
@@ -30,7 +36,7 @@ class MarketItem:
             orders = response_json['payload']['orders']
             break
         else:
-            print(f'API call for {item_id} failed.')
+            print(f'API call for {self.item_name} failed.')
             return []
 
         available_orders = [order for order in orders if \
@@ -46,10 +52,10 @@ class MarketItem:
 class MarketItems:
     items: list[MarketItem] = []
 
-    # async def get_mod_prices(self, mods: list[str]) -> dict[str, list[int]]:
+    # async def get_item_prices(self, mods: list[str]) -> dict[str, list[int]]:
     #     mod_ids = mod_names_to_ids(mods)
     #     async with aiohttp.ClientSession() as session:
-    #         tasks = [get_order_prices(mod_id, session) for mod_id in mod_ids]
+    #         tasks = [get_order_prices(mod_id, session, params.NUMBER_OF_API_CALL_RETRIES) for mod_id in mod_ids]
     #         print('Gathering mod prices from WarframeMarket. Please wait.')
     #         results = await asyncio.gather(*tasks)          
 
