@@ -34,6 +34,8 @@ class MarketItem:
                 response_json = await response.json(content_type=None)
 
             orders = response_json['payload']['orders']
+            if 'include' in response_json:
+                self.id = response_json['include']['item']['id']
             break
         else:
             print(f'API call for {self.item_name} failed.')
