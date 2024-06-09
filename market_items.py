@@ -55,6 +55,10 @@ class MarketItem:
 class MarketItems:
     items: list[MarketItem] = []
 
+    def add_items_from_item_names(self, item_names: list[str]) -> None:
+        new_items = [MarketItem(item_name=item_name) for item_name in item_names]
+        self.items.extend(new_items)
+
     def get_item_prices(self) -> None:
         asyncio.run(self._get_item_prices_async())
 
