@@ -13,7 +13,7 @@ class MarketItem:
         if self.item_name and not self.url_name:
             self._create_url_name()
 
-    # create url name by replacing spaces with underscores and remove apostrophe
+    # create url name by replacing spaces with underscores and removing apostrophes
     def _create_url_name(self) -> None:
         self. url_name = self.item_name.replace(' ', '_').replace("'", "").lower()
 
@@ -55,7 +55,10 @@ class MarketItem:
 class MarketItems:
     items: list[MarketItem] = []
 
-    async def get_item_prices(self) -> None:
+    def get_item_prices(self) -> None:
+        asyncio.run(self._get_item_prices_async())
+
+    async def _get_item_prices_async(self) -> None:
         async with aiohttp.ClientSession() as session:
             tasks = [item.get_order_prices(session, params.NUMBER_OF_API_CALL_RETRIES) for item in self.items]
             print('Gathering mod prices from WarframeMarket. Please wait.')
