@@ -5,6 +5,7 @@ import asyncio, aiohttp
 import parameters as params
 import augment_mods
 from market_items import MarketItem, MarketItems
+from sales_strategies import SellAllAtPrice, SellMostProfitable
 
 
 
@@ -67,6 +68,8 @@ if __name__ == '__main__':
     mods_to_sell_prettified = "\n".join(mods_to_sell)
 
     print(f'\nSell \n{mods_to_sell_prettified}\nat {optimal_sell_price - 1} platinum!')
+
+    print(SellAllAtPrice.propose_mods_to_sell(market_items))
 
     # TODO: move above sales strategy to own class/function
     # TODO automate sale
