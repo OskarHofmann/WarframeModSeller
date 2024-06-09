@@ -1,5 +1,5 @@
-from market_items import MarketItem, ItemWithPrice
-from sales_strategies import SalesStrategy
+from .market_items import MarketItem, ItemWithPrice
+from .sales_strategies import SalesStrategy
 from abc import ABC, abstractmethod
 
 
