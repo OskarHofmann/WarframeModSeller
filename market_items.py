@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import asyncio, aiohttp
 import parameters as params
 
@@ -7,7 +7,7 @@ class MarketItem:
     item_name: str = ""
     url_name: str = ""
     id: str = ""
-    prices: list[int] = []
+    prices: list[int] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         if self.item_name and not self.url_name:
@@ -53,7 +53,7 @@ class MarketItem:
 
 @dataclass
 class MarketItems:
-    items: list[MarketItem] = []
+    items: list[MarketItem] = field(default_factory=list)
 
     def add_items_from_item_names(self, item_names: list[str]) -> None:
         new_items = [MarketItem(item_name=item_name) for item_name in item_names]
@@ -66,7 +66,7 @@ class MarketItems:
         async with aiohttp.ClientSession() as session:
             tasks = [item.get_order_prices(session, params.NUMBER_OF_API_CALL_RETRIES) for item in self.items]
             print('Gathering mod prices from WarframeMarket. Please wait.')
-            asyncio.run(*tasks)          
+            await asyncio.gather(*tasks)          
 
 
 
