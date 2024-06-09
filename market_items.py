@@ -70,7 +70,10 @@ class MarketItems:
 
 
 
-    
+@dataclass
+class ItemWithPrice:
+    item: MarketItem
+    price: int
 
 
 
