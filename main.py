@@ -1,11 +1,8 @@
-import asyncio, aiohttp
-# from dotenv import load_dotenv
-# import unicodedata
-
 import parameters as params
-import augment_mods
-from market_items import MarketItem, MarketItems
-from sales_strategies import SellAllAtPrice, SellMostProfitable
+import libs.augment_mods as augment_mods
+from libs.market_items import MarketItem, MarketItems
+from libs.sales_strategies import SellAllAtPrice, SellMostProfitable
+from libs.sales_agents import ManualSales
 
 
 if __name__ == '__main__':
@@ -16,17 +13,9 @@ if __name__ == '__main__':
 
     market_items.get_item_prices()
 
-    cheapest_offers = {item.item_name: item.prices[0] 
-                       for item in market_items.items 
-                       if len(item.prices) > 0}
-    optimal_sell_price = max(cheapest_offers.values())
-    mods_to_sell = [k for k,v in cheapest_offers.items() if v == optimal_sell_price]
+    # print(SellMostProfitable.propose_mods_to_sell(market_items, sell_below_current_cheapest= True))
 
-    mods_to_sell_prettified = "\n".join(mods_to_sell)
+    items_to_sell = SellMostProfitable.propose_mods_to_sell(market_items, sell_below_current_cheapest= True)
+    ManualSales().sell_items(items_to_sell)
 
-    print(f'\nSell \n{mods_to_sell_prettified}\nat {optimal_sell_price - 1} platinum!')
-
-    print(SellAllAtPrice.propose_mods_to_sell(market_items, sell_at_highest=True))
-
-    # TODO: move above sales strategy to own class/function
     # TODO automate sale
