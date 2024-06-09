@@ -4,6 +4,7 @@ import asyncio, aiohttp
 
 import parameters as params
 import augment_mods
+from market_items import MarketItem, MarketItems
 
 
 
@@ -52,9 +53,14 @@ async def get_mod_prices(mods: list[str]) -> dict[str, list[int]]:
 if __name__ == '__main__':
     # load_dotenv()
     mods = augment_mods.get_augment_mods('Red Veil')
-    mod_prices = asyncio.run(get_mod_prices(mods))
+    market_items = MarketItems()
+    market_items.add_items_from_item_names(mods)
 
-    cheapest_offers = {name: prices[0] for name, prices in mod_prices.items() if len(prices) > 0}
+    market_items.get_item_prices()
+
+    cheapest_offers = {item.item_name: item.prices[0] 
+                       for item in market_items.items 
+                       if len(item.prices) > 0}
     optimal_sell_price = max(cheapest_offers.values())
     mods_to_sell = [k for k,v in cheapest_offers.items() if v == optimal_sell_price]
 
