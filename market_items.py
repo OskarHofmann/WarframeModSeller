@@ -22,7 +22,7 @@ class MarketItem:
 
         # if item id is unknown ask API to also provide additional item information
         api_params = {}
-        if not id:
+        if not self.id:
             api_params = {'include': 'item'}
 
         # try n_tries times, before giving up
