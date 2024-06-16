@@ -1,3 +1,6 @@
+import parameters as params
+import requests
+
 from dataclasses import dataclass
 
 @dataclass
@@ -8,7 +11,14 @@ class WFMarketUser():
     id: str = ""
 
 class WFMarketAuth():
-    pass
+    
+    def __init__(self, email:str, password: str) -> None:
+        self.user = WFMarketUser(email=email, password=password)
+
+        #get JSON web token (JWT) from WarframeMarket for API calls that require user authentification
+        jwt_request = requests.get(api_url)
+        self.jwt = jwt_request.cookies["JWT"]
+
 
 
 # for testing
