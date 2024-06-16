@@ -17,7 +17,7 @@ class WFMarketAuth():
             "email": email,
             "password": password
         }
-        login_header = {"Authorization": self.jwt}
+        login_header = self.get_auth_header()
 
         response = requests.post(signin_url, json=login_data, headers=login_header)
         
@@ -27,3 +27,7 @@ class WFMarketAuth():
         user_data = response.json()["payload"]["user"]
         self.user_id = user_data["id"]
         self.user_name = user_data["ingame_name"]
+
+    
+    def get_auth_header(self) -> dict:
+        return {"Authorization": self.jwt}
