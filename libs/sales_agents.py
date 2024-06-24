@@ -31,3 +31,8 @@ class AutomaticSales(SalesAgent):
     def __init__(self, auth: WFMarketAuth) -> None:
         self.auth = auth
 
+    # delete old orders that are not set/updated to new prices
+    def delete_other_orders(self, item_to_sell: list[ItemWithPrice], all_items: MarketItems):
+        pass
+    
+
