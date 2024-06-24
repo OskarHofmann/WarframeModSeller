@@ -1,9 +1,7 @@
 from libs.authentification import WFMarketAuth
 from .market_items import MarketItem, ItemWithPrice, MarketItems
 from .sales_strategies import SalesStrategy
-import parameters as params
 from abc import ABC, abstractmethod
-import requests
 
 
 class SalesAgent(ABC):
@@ -33,21 +31,3 @@ class AutomaticSales(SalesAgent):
     def __init__(self, auth: WFMarketAuth) -> None:
         self.auth = auth
 
-    def _get_current_user_sell_orders(self) -> list[dict]:
-        api_url = params.MARKET_URL + f'/profile/{self.auth.user_name}/orders'
-        header = self.auth.get_auth_header()
-
-        response = requests.get(api_url, headers = header)
-        
-        return response.json()["payload"]["sell_orders"]
-    
-    # delete old orders that are not set/updated to new prices
-    def _delete_other_orders(self, item_to_sell: list[ItemWithPrice], all_items: MarketItems):
-        pass
-        
-    #TODO: Move functions to seperate class
-    def _create_order(self):
-        pass
-
-    def _update_order(self):
-        pass
