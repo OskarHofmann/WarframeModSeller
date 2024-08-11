@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from libs.authentification import WFMarketAuth
-from libs.market_items import MarketItem
+from libs.market_items import ItemWithPrice, MarketItem
 import parameters as params
 import requests
 
@@ -38,10 +38,34 @@ def get_current_user_sell_orders(auth: WFMarketAuth) -> list[MarketOrder]:
 
 def delete_order(order: MarketOrder, auth: WFMarketAuth):
     pass
-    
 
-def create_order(item: MarketItem, auth: WFMarketAuth):
-    pass
+    
+def create_order(item_with_price: ItemWithPrice, auth: WFMarketAuth, quantity: int = 1, rank: int = 0, verbose = False) -> bool:
+    item = item_with_price.item
+    price = item_with_price.price
+
+    api_params = {
+        "item": item.id,
+        "order_type": "sell",
+        "platinum": price,
+        "quantity": quantity,
+        "visible": True,
+        "rank": rank,
+    }
+
+    api_url = params.MARKET_URL + "/profile/orders"
+    auth_header = auth.get_auth_header()
+
+    response = requests.post(api_url, json=api_params, headers= auth_header)
+
+    if response.status_code == 200:
+        return True
+    
+    if verbose:
+        print(f'Creating order failed with response code: {response.status_code}')
+    return False
+
+
 
 def update_order(order: MarketOrder, auth: WFMarketAuth, new_price: int):
     pass
