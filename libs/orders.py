@@ -13,16 +13,27 @@ class MarketOrder():
 
     # read out id and item info from full_order_info dict/json
     def __post_init__(self) -> None:
-        pass
+        self.id = self.full_order_info['id']
+        item = MarketItem(
+            item_name= self.full_order_info['item']['en']['item_name'],
+            url_name=  self.full_order_info['item']['url_name'],
+            id=        self.full_order_info['item']['id']
+        )
+        self.item = item
 
 
 
-def get_current_user_sell_orders(auth: WFMarketAuth) -> list[dict]:
+def get_current_user_sell_orders(auth: WFMarketAuth) -> list[MarketOrder]:
     api_url = params.MARKET_URL + f'/profile/{auth.user_name}/orders'
     header = auth.get_auth_header()
 
     response = requests.get(api_url, headers = header)
-    return response.json()["payload"]["sell_orders"]
+    orders_json = response.json()["payload"]["sell_orders"]
+
+    orders = []
+    for order in orders_json:
+        orders.append(MarketOrder(order))
+    return orders
 
 
 def delete_order(order: MarketOrder, auth: WFMarketAuth):
