@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-import asyncio, aiohttp
+import asyncio, aiohttp, requests
 import parameters as params
 
 @dataclass
@@ -16,6 +16,11 @@ class MarketItem:
     # create url name by replacing spaces with underscores and removing apostrophes
     def _create_url_name(self) -> None:
         self. url_name = self.item_name.replace(' ', '_').replace("'", "").lower()
+
+    def look_up_id(self) -> None:
+        api_url = params.MARKET_URL + f'/items/{self.url_name}'
+        response = requests.get(api_url)
+        self. id = response.json()["payload"]["item"]["id"]
 
     async def get_order_prices(self, session: aiohttp.ClientSession, n_tries: int = 20) -> None :
         api_url = params.MARKET_URL + f'/items/{self.url_name}/orders'
