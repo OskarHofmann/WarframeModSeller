@@ -1,6 +1,5 @@
 from libs.authentification import WFMarketAuth
 from .market_items import MarketItem, ItemWithPrice, MarketItems
-from .sales_strategies import SalesStrategy
 from abc import ABC, abstractmethod
 
 
@@ -30,6 +29,14 @@ class AutomaticSales(SalesAgent):
     
     def __init__(self, auth: WFMarketAuth) -> None:
         self.auth = auth
+        self.executed_orders = []
+
+    def sell_items(self, items_to_sell: list[ItemWithPrice]) -> None:
+        pass
+
+    async def _sell_item_async(self, item: ItemWithPrice) -> None:
+        #TODO implement create_order_async and delete_order_async
+        pass
 
     # delete old orders that are not set/updated to new prices
     def delete_other_orders(self, item_to_sell: list[ItemWithPrice], all_items: MarketItems):
