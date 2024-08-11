@@ -36,11 +36,21 @@ def get_current_user_sell_orders(auth: WFMarketAuth) -> list[MarketOrder]:
     return orders
 
 
-def delete_order(order: MarketOrder, auth: WFMarketAuth):
-    pass
+def delete_order(order: MarketOrder, auth: WFMarketAuth) -> bool:
+
+    api_url = api_url = params.MARKET_URL + "/profile/orders/" + order.id
+    auth_header = auth.get_auth_header()
+
+    response = requests.delete(api_url, headers=auth_header)
+
+    if response.status_code == 200:
+        return True
+    else:
+        return False
+
 
     
-def create_order(item_with_price: ItemWithPrice, auth: WFMarketAuth, quantity: int = 1, rank: int = 0, verbose = False) -> bool:
+def create_order(item_with_price: ItemWithPrice, auth: WFMarketAuth, quantity: int = 1, rank: int = 0, verbose = False) -> MarketOrder | None:
     item = item_with_price.item
     price = item_with_price.price
 
@@ -59,11 +69,11 @@ def create_order(item_with_price: ItemWithPrice, auth: WFMarketAuth, quantity: i
     response = requests.post(api_url, json=api_params, headers= auth_header)
 
     if response.status_code == 200:
-        return True
+        return MarketOrder(response.json()["payload"]["order"])
     
     if verbose:
         print(f'Creating order failed with response code: {response.status_code}')
-    return False
+    return None
 
 
 
