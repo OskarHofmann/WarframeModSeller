@@ -76,7 +76,7 @@ def create_order(item_with_price: ItemWithPrice, auth: WFMarketAuth, quantity: i
     return None
 
 
-
+### Not currently supported by API V1
 # def update_order(order: MarketOrder, auth: WFMarketAuth, new_price: int, new_quantity: int = 1, new_rank: int = 0, verbose: bool = False) -> MarketOrder | None:
     
 #     if not order.item:
@@ -89,7 +89,6 @@ def create_order(item_with_price: ItemWithPrice, auth: WFMarketAuth, quantity: i
 #         "quantity": new_quantity,
 #         "visible": True,
 #         "rank": new_rank,
-#         "order_id": order.id
 #     }
 #     api_url = params.MARKET_URL + "/profile/orders" + order.id
 #     auth_header = auth.get_auth_header()
