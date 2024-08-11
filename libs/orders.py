@@ -50,7 +50,7 @@ def delete_order(order: MarketOrder, auth: WFMarketAuth) -> bool:
 
 
     
-def create_order(item_with_price: ItemWithPrice, auth: WFMarketAuth, quantity: int = 1, rank: int = 0, verbose = False) -> MarketOrder | None:
+def create_order(item_with_price: ItemWithPrice, auth: WFMarketAuth, quantity: int = 1, rank: int = 0, verbose: bool = False) -> MarketOrder | None:
     item = item_with_price.item
     price = item_with_price.price
 
@@ -77,5 +77,28 @@ def create_order(item_with_price: ItemWithPrice, auth: WFMarketAuth, quantity: i
 
 
 
-def update_order(order: MarketOrder, auth: WFMarketAuth, new_price: int):
-    pass
+# def update_order(order: MarketOrder, auth: WFMarketAuth, new_price: int, new_quantity: int = 1, new_rank: int = 0, verbose: bool = False) -> MarketOrder | None:
+    
+#     if not order.item:
+#         raise ValueError("Order to update must have a valid item")
+
+#     api_params = {
+#         "item": order.item.id,
+#         "order_type": "sell",
+#         "platinum": new_price,
+#         "quantity": new_quantity,
+#         "visible": True,
+#         "rank": new_rank,
+#         "order_id": order.id
+#     }
+#     api_url = params.MARKET_URL + "/profile/orders" + order.id
+#     auth_header = auth.get_auth_header()
+
+#     response = requests.put(api_url, json=api_params, headers= auth_header)
+
+#     if response.status_code == 200:
+#         return MarketOrder(response.json()["payload"]["order"])
+    
+#     if verbose:
+#         print(f'Updating order failed with response code: {response.status_code}')
+#     return None
