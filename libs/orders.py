@@ -21,6 +21,9 @@ class MarketOrder():
         )
         self.item = item
 
+    def __eq__(self, other):
+        return self.id == other
+
 
 
 def get_current_user_sell_orders(auth: WFMarketAuth) -> list[MarketOrder]:
