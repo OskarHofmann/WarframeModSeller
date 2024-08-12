@@ -1,6 +1,10 @@
 from libs.authentification import WFMarketAuth
 from .market_items import MarketItem, ItemWithPrice, MarketItems
 from abc import ABC, abstractmethod
+import aiohttp, asyncio
+from .orders import create_order_async
+import parameters as params
+
 
 
 class SalesAgent(ABC):
@@ -32,11 +36,14 @@ class AutomaticSales(SalesAgent):
         self.executed_orders = []
 
     def sell_items(self, items_to_sell: list[ItemWithPrice]) -> None:
-        pass
+        asyncio.run(self._sell_items_async(items_to_sell))
 
-    async def _sell_item_async(self, item: ItemWithPrice) -> None:
-        #TODO implement create_order_async and delete_order_async
-        pass
+    async def _sell_items_async(self, items_to_sell: list[ItemWithPrice]) -> None:
+        async with aiohttp.ClientSession() as session:
+            tasks = [create_order_async(session, params.NUMBER_OF_API_CALL_RETRIES, item, self.auth) for item in items_to_sell]
+            print('Creating sell orders on WarframeMarket. Please wait.')
+            excuted_orders = await asyncio.gather(*tasks)
+            self.executed_orders.extend(excuted_orders)
 
     # delete old orders that are not set/updated to new prices
     def delete_other_orders(self, item_to_sell: list[ItemWithPrice], all_items: MarketItems):
