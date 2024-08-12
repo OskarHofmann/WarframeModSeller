@@ -49,13 +49,13 @@ class AutomaticSales(SalesAgent):
 
 
     # delete old orders of possible candidates as they are either outdated or should not be sold currently at all
-    def delete_other_orders(self, all_items: MarketItems):
+    def delete_other_orders(self, all_candidates: MarketItems):
         orders = get_current_user_sell_orders(self.auth)
 
-        all_items_names = [market_item.item_name for market_item in all_items.items]
+        all_candidates_names = [market_item.item_name for market_item in all_candidates.items]
         orders_to_delete = []
         for order in orders:
-            if order.item.item_name in all_items_names and not order in self.executed_orders: # type: ignore
+            if order.item.item_name in all_candidates_names and not order in self.executed_orders: # type: ignore
                 orders_to_delete.append(order)
         asyncio.run(self._delete_orders_async(orders_to_delete))
 
