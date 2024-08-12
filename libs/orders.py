@@ -47,6 +47,22 @@ def delete_order(order: MarketOrder, auth: WFMarketAuth) -> bool:
         return True
     else:
         return False
+    
+
+async def delete_order_async(session: aiohttp.ClientSession, n_tries:int,
+                        order: MarketOrder, auth: WFMarketAuth) -> bool:
+
+    api_url = api_url = params.MARKET_URL + "/profile/orders/" + order.id
+    auth_header = auth.get_auth_header()
+
+    for _ in range(n_tries):
+        async with session.delete(url=api_url, headers = auth_header) as response:
+            if response.status != 200:
+                await asyncio.sleep(1)
+                continue
+            return True
+    else:
+        return False
 
 
     
