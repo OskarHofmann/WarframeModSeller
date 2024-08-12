@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from libs.authentification import WFMarketAuth
 from libs.market_items import ItemWithPrice, MarketItem
 import parameters as params
-import requests
+import requests, aiohttp, asyncio
 
 
 @dataclass
@@ -74,6 +74,40 @@ def create_order(item_with_price: ItemWithPrice, auth: WFMarketAuth, quantity: i
     if verbose:
         print(f'Creating order failed with response code: {response.status_code}')
     return None
+
+
+async def create_order_async(session: aiohttp.ClientSession, n_tries: int, 
+                             item_with_price: ItemWithPrice, auth: WFMarketAuth, 
+                             quantity: int = 1, rank: int = 0) -> MarketOrder | None:
+    item = item_with_price.item
+    price = item_with_price.price
+
+    api_params = {
+        "item": item.id,
+        "order_type": "sell",
+        "platinum": price,
+        "quantity": quantity,
+        "visible": True,
+        "rank": rank,
+    }
+
+    api_url = params.MARKET_URL + "/profile/orders"
+    auth_header = auth.get_auth_header()
+
+    for _ in range(n_tries):
+        async with session.post(url=api_url, json=api_params, headers = auth_header) as response:
+            if response.status != 200:
+                await asyncio.sleep(1)
+                continue
+            response_json = await response.json(content_type=None)
+
+        return MarketOrder(response_json['payload']['order'])
+    else:
+        return None
+
+  
+
+
 
 
 ### Not currently supported by API V1
