@@ -34,7 +34,7 @@ class MarketItem:
         for _ in range(n_tries):
             async with session.get(url=api_url, params=api_params) as response:
                 if response.status != 200:
-                    await asyncio.sleep(1)
+                    await asyncio.sleep(params.SECONDS_BEFORE_RETRY_API_CALL)
                     continue
                 response_json = await response.json(content_type=None)
 

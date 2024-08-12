@@ -61,7 +61,7 @@ async def delete_order_async(session: aiohttp.ClientSession, n_tries:int,
     for _ in range(n_tries):
         async with session.delete(url=api_url, headers = auth_header) as response:
             if response.status != 200:
-                await asyncio.sleep(1)
+                await asyncio.sleep(params.SECONDS_BEFORE_RETRY_API_CALL)
                 continue
             return True
     else:
@@ -116,7 +116,7 @@ async def create_order_async(session: aiohttp.ClientSession, n_tries: int,
     for _ in range(n_tries):
         async with session.post(url=api_url, json=api_params, headers = auth_header) as response:
             if response.status != 200:
-                await asyncio.sleep(1)
+                await asyncio.sleep(params.SECONDS_BEFORE_RETRY_API_CALL)
                 continue
             response_json = await response.json(content_type=None)
 
