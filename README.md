@@ -15,7 +15,7 @@ converts the mod/item names into `MarketItems` which allows to keep track of the
 <br/><br/>
 
 https://github.com/OskarHofmann/WarframeModSeller/blob/d39f9077b6d462118b07e8772549f423152e0ebc/main.py#L18
-uses the `SalesStrategy` `SellMostProfitable` to determine the current cheapest price of all given market items and determine the most profitable (i.e. most expensive) ones. `difference_to_highest = 0` is the most greedy version that only sells the most expenisive items. A larger value for `difference_to_highest` also sells that items that are that much cheaper. `sell_below_current_cheapest` determines whether the item should be sold at the currently cheapest price or for one platinum less.
+uses the `SalesStrategy` `SellMostProfitable` to determine the current cheapest price of all given market items and determine the most profitable (i.e. most expensive) ones. `difference_to_highest = 0` is the most greedy version that only sells the most expensive items. A larger value for `difference_to_highest` also sells that items that are that much cheaper. `sell_below_current_cheapest` determines whether the item should be sold at the currently cheapest price or for one platinum less.
 <br/><br/>
 
 https://github.com/OskarHofmann/WarframeModSeller/blob/f5c896600540c3d089214a1ac6937f91e0514f86/main.py#L21
