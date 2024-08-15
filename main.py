@@ -15,7 +15,7 @@ if __name__ == '__main__':
 
     market_items.get_item_prices()
 
-    items_to_sell = SellMostProfitable.propose_mods_to_sell(market_items, sell_below_current_cheapest= True)
+    items_to_sell = SellMostProfitable.propose_mods_to_sell(market_items, difference_to_highest=0, sell_below_current_cheapest= False)
 
     # print most profitable mods with price    
     ManualSales().sell_items(items_to_sell)
