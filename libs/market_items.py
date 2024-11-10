@@ -13,9 +13,9 @@ class MarketItem:
         if self.item_name and not self.url_name:
             self._create_url_name()
 
-    # create url name by replacing spaces with underscores and removing apostrophes
+    # create url name by replacing spaces with underscores, removing apostrophes and replacing ampersand with "and"
     def _create_url_name(self) -> None:
-        self. url_name = self.item_name.replace(' ', '_').replace("'", "").lower()
+        self. url_name = self.item_name.replace(' ', '_').replace("'", "").replace('&','and').lower()
 
     def look_up_id(self) -> None:
         api_url = params.MARKET_URL + f'/items/{self.url_name}'
